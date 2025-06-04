@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AES Encrypt/Decrypt</title>
+  <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Helvetica Neue", sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: #f4f4f4;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .btn-group {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .copy-msg {
+      color: green;
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .btn-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>AES Encrypt / Decrypt</h2>
+
+    <label for="plainText">Text to Encrypt:</label>
+    <textarea id="plainText" placeholder="Enter text here..."></textarea>
+
+    <label for="password">Password (Key):</label>
+    <input type="text" id="password" placeholder="Enter key here..." />
+
+    <div class="btn-group">
+      <button onclick="encrypt()">Encrypt</button>
+    </div>
+
+    <label for="cipherText">Encrypted Text:</label>
+    <textarea id="cipherText" placeholder="Encrypted output..."></textarea>
+    <div class="btn-group">
+      <button onclick="copyText('cipherText', 'copyMsg1')">📋 Copy Cipher</button>
+      <span class="copy-msg" id="copyMsg1">Copied!</span>
+    </div>
+
+    <div class="btn-group">
+      <button onclick="decrypt()">Decrypt</button>
+    </div>
+
+    <label for="decryptedText">Decrypted Text:</label>
+    <textarea id="decryptedText" placeholder="Decrypted output..."></textarea>
+    <div class="btn-group">
+      <button onclick="copyText('decryptedText', 'copyMsg2')">📋 Copy Plain</button>
+      <span class="copy-msg" id="copyMsg2">Copied!</span>
+    </div>
+  </div>
+
+  <script>
+    function encrypt() {
+      const text = document.getElementById('plainText').value;
+      const key = document.getElementById('password').value;
+      const encrypted = CryptoJS.AES.encrypt(text, key).toString();
+      document.getElementById('cipherText').value = encrypted;
+    }
+
+    function decrypt() {
+      const ciphertext = document.getElementById('cipherText').value;
+      const key = document.getElementById('password').value;
+      try {
+        const bytes = CryptoJS.AES.decrypt(ciphertext, key);
+        const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+        document.getElementById('decryptedText').value = decrypted || '[Invalid password or ciphertext]';
+      } catch (e) {
+        document.getElementById('decryptedText').value = '[Error during decryption]';
+      }
+    }
+
+    function copyText(textareaId, msgId) {
+      const textArea = document.getElementById(textareaId);
+      textArea.select();
+      document.execCommand("copy");
+
+      const msg = document.getElementById(msgId);
+      msg.style.display = 'inline';
+      setTimeout(() => msg.style.display = 'none', 2000);
+    }
+  </script>
+</body>
+</html>
+
